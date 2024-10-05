@@ -1,0 +1,49 @@
+Problem Statement
+Given two sets of data: current and desired, each represents the order of layers within the neural network architecture. During the training of the model, an operation can be performed to adjust the arrangement of layers. In one step, a layer is selected from the end of the list and inserted at any arbitrary position within the list.
+
+The task is to determine the minimum number of steps required to transform the initial arrangement (current) into the desired arrangement (desired) while training the neural network.
+
+Note: It is guaranteed that the desired arrangement can always be achieved using the given operation.
+
+Example:
+n = 5
+current = [2, 1, 3, 5, 4]
+required = [2, 4, 1, 5, 3]
+output = 3
+The example given in the problem demonstrates an array transformation where layers from a neural network's current configuration must be rearranged to match a desired configuration by taking the last element of the current array and inserting it anywhere in the array.
+def getMinSteps(current, required):
+    hash_map = {}
+    seen = set()
+    # 遍历required列表的索引和值
+    for i in range(len(required) - 1):
+        # 将当前元素映射到下一个元素
+        hash_map[required[i]] = required[i + 1]
+    # 初始化移动步数
+    steps = 0
+    # 查找每个`current`列表中的元素应该放置的位置
+    cur = len(current)-1
+    req = len(required)-1
+    while current != required:
+        # 检查current列表最后一个元素是否已经在正确的位置
+        while current[cur] == required[req]:
+            remove = current[cur]  # 如果是，就把它从current中移除
+            if remove not in seen:
+                steps += 1
+            cur -= 1
+            req -= 1
+                
+        if not current:
+            break
+        # 找到current最后一个元素在required中的位置
+        move_item = current.pop(cur)
+        seen.add(move_item)
+        idx = current.index(hash_map[move_item])
+        # 将该元素插入到required中该元素位置之前的位置
+        current.insert(idx, move_item)
+        steps += 1  # 记录步骤
+    return steps
+
+# Example usage
+current = [3,2,1]
+required = [1,2,3]
+print(getMinSteps(current, required))
